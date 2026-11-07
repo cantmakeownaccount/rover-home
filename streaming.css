@@ -1,0 +1,488 @@
+/* =====================================================================
+   STREAMING 3.0 — a stage that becomes the app you're on, logo tiles,
+   brand-tinted glass. Only transform + opacity animate (TV speed rule).
+   ===================================================================== */
+#v-library { overflow: hidden; }
+
+/* ---------- The stage ---------- */
+#st-stage { position: absolute; left: 110px; right: 110px; top: 64px; height: 430px; border-radius: 44px; overflow: hidden;
+  --sacc: var(--scarlet); --sacc-rgb: 255,42,61;
+  background: linear-gradient(120deg, rgba(14,14,19,.78), rgba(14,14,19,.38));
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: inset 0 1.5px 0 rgba(255,255,255,.22), 0 40px 90px rgba(0,0,0,.5); }
+#st-glow { position: absolute; inset: -20%; pointer-events: none;
+  background:
+    radial-gradient(42% 60% at 16% 40%, rgba(var(--sacc-rgb), .55), transparent 70%),
+    radial-gradient(36% 50% at 82% 82%, rgba(var(--b-rgb), .35), transparent 70%),
+    radial-gradient(30% 40% at 60% 10%, rgba(var(--sacc-rgb), .22), transparent 70%); }
+#st-art { position: absolute; top: 0; right: 0; bottom: 0; width: 64%; opacity: 0; transition: opacity .35s linear;
+  background-size: cover; background-position: center;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 30%, #000 62%); }
+#st-art.on { opacity: .9; }
+/* sweeping light line on the stage's top edge, tinted to the app */
+#st-stage::after { content: ""; position: absolute; left: 6%; right: 6%; top: 0; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(var(--sacc-rgb), .95), rgba(255,255,255,.9), rgba(var(--sacc-rgb), .95), transparent); opacity: .85; }
+
+#st-info { position: absolute; left: 72px; top: 0; bottom: 0; width: 760px; display: flex; flex-direction: column; justify-content: center; }
+#st-kicker { font-size: 20px; letter-spacing: 7px; text-transform: uppercase; font-weight: 600; color: rgba(242,244,248,.62); margin-bottom: 26px; }
+#st-kicker::before { content: ""; display: inline-block; width: 34px; height: 4px; border-radius: 2px; margin-right: 16px; vertical-align: middle;
+  background: linear-gradient(90deg, var(--sacc), var(--purple)); }
+#st-logo { height: 150px; display: flex; align-items: center; }
+#st-logo img { max-height: 150px; max-width: 560px; object-fit: contain; filter: drop-shadow(0 10px 34px rgba(0,0,0,.55)); }
+#st-logo.word { font-size: 112px; font-weight: 800; letter-spacing: -4px; line-height: 1; color: #fff; white-space: nowrap;
+  text-shadow: 0 0 42px rgba(var(--sacc-rgb), .75), 0 8px 30px rgba(0,0,0,.6); }
+#st-name { font-size: 30px; font-weight: 600; color: #f2f4f8; margin-top: 18px; min-height: 0; }
+#st-name:empty { display: none; }
+#st-meta { font-size: 24px; color: rgba(242,244,248,.72); margin-top: 14px; min-height: 30px; }
+#st-cta { display: flex; align-items: center; gap: 16px; margin-top: 34px; font-size: 24px; color: #f2f4f8; }
+#st-cta b { font-size: 18px; letter-spacing: 2px; padding: 9px 18px; border-radius: 14px; color: #0c0c10; background: #f2f4f8;
+  box-shadow: 0 0 0 4px rgba(var(--sacc-rgb), .45), 0 10px 30px rgba(var(--sacc-rgb), .45); }
+#st-cta em { font-style: normal; font-size: 20px; color: rgba(242,244,248,.55); margin-left: 12px; }
+#st-stage.empty #st-info { opacity: 0; }
+
+/* the stage "re-tunes" when you move to another app */
+@keyframes stIn { from { opacity: 0; transform: translateX(-26px); } to { opacity: 1; transform: none; } }
+@keyframes stGlow { from { opacity: .25; transform: scale(1.08); } to { opacity: 1; transform: none; } }
+#st-stage.swap #st-info { animation: stIn .26s var(--quick) both; }
+#st-stage.swap #st-glow { animation: stGlow .4s var(--quick) both; }
+
+/* ---------- Logo tiles ---------- */
+#st-gridwrap { position: absolute; left: 110px; right: 110px; top: 540px; bottom: 0; overflow: visible; }
+#v-library .grid { gap: 30px; transition: transform .22s var(--quick); padding-top: 14px; }
+.st-tile { width: 316px; height: 178px; display: block; padding: 0; border-radius: 30px; overflow: hidden; }
+.st-tile.frost::before { left: 24px; top: 22px; width: 34px; height: 5px; z-index: 2; }
+.st-tint { position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none;
+  background:
+    radial-gradient(90% 120% at 0% 0%, rgba(var(--acc-rgb), .42), transparent 62%),
+    radial-gradient(70% 90% at 100% 100%, rgba(var(--acc-rgb), .22), transparent 70%),
+    linear-gradient(160deg, rgba(var(--acc-rgb), .10), rgba(10,10,14,.35)); }
+.st-tile.has-art .st-tint { background: linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.55)), radial-gradient(90% 120% at 0% 0%, rgba(var(--acc-rgb), .30), transparent 60%); }
+.st-mark { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-58%); text-align: center; padding: 0 18px;
+  font-size: 40px; font-weight: 800; letter-spacing: -1px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  text-shadow: 0 0 26px rgba(var(--acc-rgb), .8), 0 4px 14px rgba(0,0,0,.6); }
+.st-logo { position: absolute; left: 50%; top: 46%; max-width: 64%; max-height: 46%; object-fit: contain; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,.55)); transition: transform .16s var(--snap); }
+.st-tile.has-logo .st-mark { display: none; }
+.st-tile.focus .st-logo { transform: translate(-50%, -50%) scale(1.08); }
+.st-name { position: absolute; left: 24px; right: 24px; bottom: 16px; font-size: 17px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+  color: rgba(242,244,248,.70); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-tile:not(.has-logo) .st-name { opacity: 0; }
+.st-chip { position: absolute; right: 18px; top: 16px; font-size: 14px; font-weight: 700; letter-spacing: 2px; padding: 5px 11px; border-radius: 10px;
+  color: #f2f4f8; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.18); display: none; }
+.st-tile.missing { opacity: .5; }
+.st-tile.missing .st-chip { display: block; }
+.st-tile.missing .st-chip::before { content: "NOT ON TV"; }
+.st-tile.missing.focus { opacity: 1; }
+#lib-empty { position: absolute; left: 110px; top: 560px; font-size: 28px; color: rgba(242,244,248,.7); }
+
+/* focus ring drawn inside the tile (tiles clip overflow) */
+.st-tile.frost::after { inset: 0; border: 3px solid rgba(255,255,255,.92);
+  box-shadow: inset 0 0 0 1px rgba(var(--acc-rgb), .9), inset 0 0 40px rgba(var(--acc-rgb), .45); }
+.st-tile.focus { z-index: 3; }
+.st-tile.focus .st-tint { opacity: 1; filter: saturate(1.4); }
+
+/* giant ghost of the app on the right side of the stage */
+#st-ghost { position: absolute; right: -40px; top: 50%; transform: translateY(-50%); width: 900px; height: 360px; pointer-events: none;
+  display: flex; align-items: center; justify-content: flex-end; opacity: .16; }
+#st-ghost.word { font-size: 260px; font-weight: 900; letter-spacing: -12px; white-space: nowrap; color: transparent;
+  -webkit-text-stroke: 3px rgba(var(--sacc-rgb), 1); }
+#st-ghost img { max-width: 860px; max-height: 340px; object-fit: contain; filter: grayscale(1) brightness(2.4); }
+#st-art.on ~ #st-ghost { opacity: 0; }
+#st-stage.swap #st-ghost { animation: stGhost .5s var(--quick) both; }
+@keyframes stGhost { from { opacity: 0; transform: translate(60px, -50%); } to { opacity: .16; transform: translateY(-50%); } }
+
+/* =====================================================================
+   LIQUID GLASS BUBBLES 3.1
+   Artwork lives in covers/, logos in logos/. All glass is CSS layers:
+     .st-clip  > .st-cover (art, lens-zoomed)  .st-tint  .st-lens (fisheye shading + specular)  .st-wave (waterfall edge)
+   Rest state is static; focus only changes transform + opacity (Tizen-safe).
+   ===================================================================== */
+.st-tile { --rad: 44px; border-radius: var(--rad); overflow: visible !important; z-index: 0; isolation: isolate;
+  border: 0; background: rgba(8,8,12,.55);
+  box-shadow: 0 0 0 1.5px rgba(var(--acc-rgb), .55), 0 0 26px rgba(var(--acc-rgb), .30), 0 22px 44px rgba(0,0,0,.5); }
+.st-tile.frost { background-image: none; }
+.st-tile.frost::before { display: none; }                     /* old accent bar */
+.st-clip { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; z-index: 1; pointer-events: none;
+  -webkit-mask-image: -webkit-radial-gradient(white, black); }  /* forces clean rounded clipping on Tizen's WebKit */
+.st-clip > i { position: absolute; inset: 0; border-radius: inherit; }
+
+/* art: zoomed a little = lens bulge; zooms further on focus (transform only) */
+.st-cover { background-size: cover; background-position: 70% 50%; transform: scale(1.14); transition: transform .28s var(--quick); opacity: 0; }
+.st-tile.has-cover .st-cover { opacity: 1; }
+.st-tile.focus .st-cover { transform: scale(1.24); }
+.st-tile.has-cover .st-tint { background:
+    linear-gradient(90deg, rgba(4,4,8,.86) 0%, rgba(4,4,8,.55) 34%, rgba(4,4,8,0) 70%),
+    radial-gradient(80% 110% at 0% 100%, rgba(var(--acc-rgb), .35), transparent 60%); }
+
+/* fisheye: darker, compressed edges + bright convex centre + specular arc on the upper rim */
+.st-lens { background:
+    radial-gradient(130% 75% at 50% -18%, rgba(255,255,255,.34) 0%, rgba(255,255,255,.10) 38%, transparent 56%),
+    radial-gradient(ellipse at 50% 46%, transparent 52%, rgba(0,0,0,.34) 82%, rgba(0,0,0,.62) 100%);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.60), inset 0 -2px 1px rgba(255,255,255,.10),
+              inset 0 0 0 1.5px rgba(var(--acc-rgb), .75), inset 0 0 28px rgba(var(--acc-rgb), .40),
+              inset 0 -26px 34px rgba(0,0,0,.45); }
+.st-lens::after { content: ""; position: absolute; left: 7%; right: 38%; top: 5px; height: 26%; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,.42), rgba(255,255,255,0)); opacity: .55; }
+
+/* waterfall edge: a glowing curved sheet sweeping along the bottom */
+.st-wave { inset: auto !important; left: -18%; right: -18%; bottom: -74%; height: 100%; border-radius: 50% !important;
+  border-top: 2px solid rgba(var(--acc-rgb), .95); transform: rotate(-4deg);
+  background: linear-gradient(180deg, rgba(var(--acc-rgb), .30), rgba(var(--acc-rgb), .04) 26%, transparent 45%);
+  box-shadow: 0 -8px 22px rgba(var(--acc-rgb), .50); }
+.st-wave::after { content: ""; position: absolute; left: 12%; right: 22%; top: -2px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); }
+
+/* content above the glass */
+.st-logo, .st-mark, .st-name, .st-chip { z-index: 3; }
+.st-tile.has-cover .st-logo { left: 26px; top: 47%; max-width: 54%; max-height: 40%; transform: translateY(-50%); object-position: left center; }
+.st-tile.has-cover.focus .st-logo { transform: translateY(-50%) scale(1.06); transform-origin: left center; }
+.st-tile.has-cover .st-mark { text-align: left; left: 26px; right: auto; max-width: 60%; padding: 0; }
+.st-tile.has-cover .st-name { opacity: 0; }
+
+/* focus: brighter rim, deeper glass, soft outer glow — one pre-built layer that only fades in */
+.st-tile.frost::after { inset: -3px; z-index: 4; border: 2.5px solid rgba(255,255,255,.92); border-radius: calc(var(--rad) + 3px);
+  box-shadow: 0 0 0 3px rgba(var(--acc-rgb), .75), 0 0 54px rgba(var(--acc-rgb), .80), 0 26px 60px rgba(0,0,0,.55),
+              inset 0 0 36px rgba(var(--acc-rgb), .45); }
+.st-tile.focus { transform: translateY(-6px) scale(1.05); z-index: 3; }
+.st-tile.has-art .tart { z-index: 1; }
+
+/* =========================== hero panel =========================== */
+#st-stage { border-radius: 56px; border: 0; background: #07070b;
+  box-shadow: 0 0 0 2px rgba(var(--sacc-rgb), .80), 0 0 70px rgba(var(--sacc-rgb), .42), 0 40px 90px rgba(0,0,0,.55); }
+#st-art { width: 76%; transform: scale(1.06); transform-origin: 70% 50%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 22%, #000 48%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 22%, #000 48%); }
+#st-art.on { opacity: 1; }
+#st-stage.has-cover #st-glow { opacity: .55; }
+#st-lens { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 2;
+  background:
+    radial-gradient(110% 60% at 50% -22%, rgba(255,255,255,.22), transparent 52%),
+    radial-gradient(ellipse at 55% 45%, transparent 58%, rgba(0,0,0,.42) 100%);
+  box-shadow: inset 0 2px 1px rgba(255,255,255,.55), inset 0 0 0 1.5px rgba(var(--sacc-rgb), .7), inset 0 0 50px rgba(var(--sacc-rgb), .35); }
+#st-wave { position: absolute; left: -12%; right: -12%; bottom: -78%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none;
+  border-top: 2.5px solid rgba(var(--sacc-rgb), .95); transform: rotate(-2.2deg);
+  background: linear-gradient(180deg, rgba(var(--sacc-rgb), .32), rgba(var(--sacc-rgb), .05) 18%, transparent 34%);
+  box-shadow: 0 -10px 34px rgba(var(--sacc-rgb), .55); }
+#st-wave i { position: absolute; left: 18%; right: 30%; top: -2px; height: 2.5px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); }
+#st-info { z-index: 3; }
+#st-stage::after { display: none; }
+#st-ghost { z-index: 3; }
+#st-ghost.mark { opacity: 1; right: 70px; width: auto; height: 270px; }
+#st-ghost.mark img { max-height: 270px; max-width: 320px; filter: drop-shadow(0 0 30px rgba(var(--sacc-rgb), .7)); }
+#st-stage.has-cover #st-logo img { max-height: 140px; filter: drop-shadow(0 6px 26px rgba(0,0,0,.8)); }
+#st-stage.swap #st-art { animation: stArt .45s var(--quick) both; }
+@keyframes stArt { from { opacity: 0; transform: scale(1.12); } to { opacity: 1; transform: scale(1.06); } }
+#st-stage.swap #st-ghost.mark { animation: stIn .3s var(--quick) both; }
+
+/* 3.1 fixes */
+#st-wave { bottom: -88%; }
+#st-ghost.mark { top: 64px; bottom: 64px; height: auto; transform: none !important; animation: none !important; align-items: center; }
+#st-ghost.mark img { max-height: 100%; }
+.st-lens::after { left: 10%; right: 46%; height: 14%; top: 6px; opacity: .3; }
+.st-wave { bottom: -68%; border-top-width: 2.5px; }
+#st-art.on ~ #st-ghost.mark { opacity: 1; }
+.st-clip > i.st-wave { left: -18% !important; right: -18% !important; bottom: -66% !important; top: auto !important; height: 100%; }
+#st-wave { bottom: -92%; transform: rotate(-1.4deg); }
+
+/* 3.2: names without a logo fit the bubble (no "Prime …"), brand-tinted glow */
+.st-tile.has-cover .st-mark { max-width: 74%; font-size: 38px; letter-spacing: -.5px; white-space: normal; line-height: 1;
+  overflow: visible; text-overflow: clip;
+  text-shadow: 0 0 22px rgba(var(--acc-rgb), .95), 0 0 2px rgba(var(--acc-rgb), .8), 0 4px 16px rgba(0,0,0,.85); }
+#st-logo.word { text-shadow: 0 0 46px rgba(var(--sacc-rgb), .9), 0 0 3px rgba(var(--sacc-rgb), .9), 0 8px 30px rgba(0,0,0,.7); }
+
+/* =====================================================================
+   3.3 PROPORTIONS — hero and bubbles share one 1700px column, edge to edge.
+   Hero 480 tall, two rows of 190px bubbles, even margins top and bottom.
+   ===================================================================== */
+#st-stage { left: 110px; right: 110px; top: 48px; height: 480px; }
+#st-gridwrap { left: 110px; right: 110px; top: 556px; }
+#v-library .grid#lib-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 28px; flex-wrap: nowrap; padding-top: 12px; }
+#lib-grid .st-tile { width: auto; height: 190px; }
+
+/* bubble details (from the mockup): kicker, name under a logo, OK chip on the selected bubble */
+.st-kick { position: absolute; left: 28px; top: 20px; z-index: 3; font-size: 13px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase;
+  color: rgba(242,244,248,.72); text-shadow: 0 1px 6px rgba(0,0,0,.8); }
+.st-kick::before { content: ""; display: inline-block; width: 16px; height: 2px; border-radius: 1px; margin-right: 8px; vertical-align: middle;
+  background: rgba(var(--acc-rgb), 1); }
+.st-tile.has-cover .st-mark { top: 46%; }
+.st-tile.has-cover .st-logo { top: 44%; max-height: 36%; }
+.st-tile.has-cover.has-logo .st-name { opacity: 1; left: 28px; right: auto; bottom: auto; top: 64%; font-size: 18px; font-weight: 600;
+  letter-spacing: .3px; text-transform: none; color: rgba(255,255,255,.88); text-shadow: 0 2px 10px rgba(0,0,0,.85); }
+.st-ok { position: absolute; left: 28px; bottom: 20px; z-index: 3; display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; color: #fff;
+  opacity: 0; transform: translateY(6px); transition: opacity .14s linear, transform .18s var(--quick); text-shadow: 0 2px 8px rgba(0,0,0,.8); }
+.st-ok b { font-size: 12px; letter-spacing: 1.5px; padding: 4px 9px; border-radius: 9px; color: #0c0c10; background: #f4f5f8;
+  box-shadow: 0 0 0 2px rgba(var(--acc-rgb), .7), 0 0 14px rgba(var(--acc-rgb), .7); text-shadow: none; }
+.st-tile.focus .st-ok { opacity: 1; transform: none; }
+.st-tile.focus.has-logo .st-name { opacity: 0; }
+
+/* hero: room for the bigger panel */
+#st-info { left: 76px; width: 720px; }
+#st-logo img { max-height: 160px; }
+
+/* poster mode: 16:9 art (like Zeus) shown whole on the right, blurred copy fills the panel */
+#st-blur { position: absolute; inset: 0; border-radius: inherit; background-size: cover; background-position: center; opacity: 0;
+  transition: opacity .3s linear; }
+#st-stage.poster #st-blur { opacity: .55; }
+#st-stage.poster #st-blur::after { content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(90deg, rgba(5,5,10,.92) 0%, rgba(5,5,10,.6) 38%, rgba(5,5,10,.15) 70%); }
+#st-stage.poster #st-art { left: auto; right: 0; width: 64%; transform: none; background-size: cover; background-position: center 30%;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 12%, #000 28%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.55) 12%, #000 28%); }
+#st-stage.poster.swap #st-art { animation: stPoster .4s var(--quick) both; }
+@keyframes stPoster { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: none; } }
+#st-stage.poster #st-ghost.mark { display: none; }
+/* 3.3b: whole poster visible in the panel; busy covers get a deeper scrim behind the logo */
+#st-stage.poster #st-art { width: 880px; background-position: center center;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 10%, #000 22%);
+          mask-image: linear-gradient(90deg, transparent 0%, rgba(0,0,0,.6) 10%, #000 22%); }
+.st-tile.has-cover .st-tint { background:
+    linear-gradient(90deg, rgba(4,4,8,.92) 0%, rgba(4,4,8,.66) 38%, rgba(4,4,8,.12) 72%, rgba(4,4,8,0) 100%),
+    radial-gradient(80% 110% at 0% 100%, rgba(var(--acc-rgb), .35), transparent 60%); }
+
+/* =====================================================================
+   3.4 FINISHED CARDS — your own bubble/panel graphics, shown exactly as made.
+   One 1645px column: panel sits on the bubbles (bottom edge fixed at y=560),
+   bubbles 313 x 170 in two rows of five, 20px gaps. Panel height follows the art.
+   ===================================================================== */
+#st-stage, #st-gridwrap { left: 138px; right: 137px; }
+#st-gridwrap { top: 590px; }
+#v-library .grid#lib-grid { gap: 20px; }
+#lib-grid .st-tile { height: 170px; }
+#st-card { display: none; }
+#st-stage.baked { background: none; box-shadow: none; border-radius: 34px; overflow: visible; }
+#st-stage.baked > *:not(#st-card) { display: none !important; }
+#st-stage.baked #st-card { display: block; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  filter: drop-shadow(0 30px 60px rgba(0,0,0,.55)); }
+#st-stage.baked.swap #st-card { animation: stCard .32s var(--quick) both; }
+@keyframes stCard { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
+
+.st-tile.baked { background: none !important; box-shadow: none !important; border-radius: 28px; }
+.st-tile.baked > *:not(.st-card):not(.st-chip) { display: none !important; }
+.st-card { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; opacity: .84; transition: opacity .14s linear; }
+.st-tile.baked.focus .st-card { opacity: 1; }
+.st-tile.baked.frost::after { display: block !important; inset: -5px; border-radius: 32px; z-index: 2;
+  border: 2.5px solid rgba(255,255,255,.95);
+  box-shadow: 0 0 0 3px rgba(var(--acc-rgb), .85), 0 0 46px rgba(var(--acc-rgb), .9), 0 24px 50px rgba(0,0,0,.6); }
+.st-tile.baked.focus { transform: translateY(-6px) scale(1.06); }
+
+/* =====================================================================
+   3.5 FULL PANELS — every app's top panel is Zeus-sized (1645 x 512) and owns
+   the screen: art fills the right, logo + text crisp on the left, glass rim.
+   ===================================================================== */
+#st-stage.composed { border-radius: 46px; background: #05050a; overflow: hidden;
+  box-shadow: 0 0 0 2.5px rgba(var(--sacc-rgb), .95), 0 0 0 6px rgba(255,255,255,.06), 0 0 90px rgba(var(--sacc-rgb), .55), 0 44px 90px rgba(0,0,0,.6); }
+#st-stage.composed #st-card { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+#st-stage.composed #st-art, #st-stage.composed #st-blur, #st-stage.composed #st-ghost, #st-stage.composed #st-glow { display: none !important; }
+#st-stage.composed #st-lens { z-index: 2; box-shadow: inset 0 2.5px 1px rgba(255,255,255,.7), inset 0 0 0 2px rgba(var(--sacc-rgb), .8),
+  inset 0 0 70px rgba(var(--sacc-rgb), .35), inset 0 -40px 60px rgba(0,0,0,.35);
+  background: radial-gradient(120% 60% at 40% -26%, rgba(255,255,255,.20), transparent 50%); }
+#st-stage.composed #st-wave { z-index: 2; bottom: -90%; }
+#st-stage.composed #st-info { z-index: 3; left: 84px; width: 560px; top: 0; bottom: 0; }
+#st-stage.composed #st-kicker { font-size: 22px; letter-spacing: 9px; margin-bottom: 30px; color: rgba(255,255,255,.82); }
+#st-stage.composed #st-kicker::before { background: rgba(255,255,255,.8); width: 40px; height: 3px; }
+#st-stage.composed #st-logo { height: 150px; }
+#st-stage.composed #st-logo img { max-height: 132px; max-width: 520px; filter: drop-shadow(0 8px 30px rgba(0,0,0,.7)); }
+#st-stage.composed #st-name { font-size: 36px; font-weight: 600; margin-top: 20px; color: #fff; }
+#st-stage.composed #st-meta { display: none; }
+#st-stage.composed #st-cta { margin-top: 44px; font-size: 28px; font-weight: 600; }
+#st-stage.composed #st-cta b { font-size: 22px; padding: 10px 20px; border-radius: 16px; }
+#st-stage.composed #st-cta em { font-size: 22px; color: rgba(255,255,255,.75); padding-left: 18px; border-left: 2px solid rgba(255,255,255,.35); }
+#st-stage.composed.swap #st-card { animation: stCard .32s var(--quick) both; }
+
+/* =====================================================================
+   3.6 PANEL STACK — every finished panel is decoded once and layered here.
+   Switching apps = crossfade (opacity) + short slide (transform). Nothing else
+   moves, repaints or re-lays out, so it's smooth on the TV.
+   ===================================================================== */
+#st-stack { position: absolute; left: 138px; width: 1645px; top: 0; height: 560px; pointer-events: none; z-index: 1; }
+.st-h { position: absolute; left: 0; bottom: 0; width: 100%; height: auto; display: block;
+  opacity: 0; transform: translate3d(0, 10px, 0); transition: opacity .18s linear, transform .24s var(--quick);
+  will-change: opacity, transform; backface-visibility: hidden; }
+.st-h.on { opacity: 1; transform: translate3d(0, 0, 0); }
+#st-stage.stacked { visibility: hidden; }
+/* selection glow is its own pre-built layer that only fades */
+.st-tile.baked.frost::after { will-change: opacity; transition: opacity .12s linear; }
+.st-tile.baked { will-change: transform; }
+.st-card { will-change: opacity; }
+
+/* =====================================================================
+   3.7 LIQUID GLASS OVER CLEAN ART
+   Artwork files stay untouched (cards/<app>-hero.webp, cards/<app>-tile.webp).
+   Glass = static CSS layers inside one rounded clip:
+     .g-refr  edge refraction ring (same image, magnified, shown only near the rim)
+     .g-lens  fisheye depth (brighter convex centre, darker curved edges)
+     .g-spec  glossy reflection arc across the top
+     .g-wave  waterfall edge: app-lit curved sheet along the bottom
+     .g-rim   inner rim light in the app's colours
+   Only opacity/transform animate (selection + panel crossfade).
+   ===================================================================== */
+.g-clip { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; -webkit-mask-image: -webkit-radial-gradient(white, black); }
+.g-clip > img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.g { position: absolute; inset: 0; border-radius: inherit; pointer-events: none; display: block; }
+.g-refr { background-size: 108% 108%; background-position: center; opacity: .5;
+  -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 78%, #000 100%);
+          mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 78%, #000 100%); }
+.g-lens { background: radial-gradient(ellipse 70% 80% at 50% 38%, rgba(255,255,255,.07) 0%, transparent 52%, rgba(0,0,0,.30) 100%); }
+.g-spec::before { content: ""; position: absolute; left: 5%; right: 34%; top: 2%; height: 30%; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.04) 70%, rgba(255,255,255,0)); }
+.g-spec::after { content: ""; position: absolute; left: 3%; right: 3%; top: 0; height: 40%; border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), transparent); }
+.g-wave { inset: auto; left: -18%; right: -18%; bottom: -88%; height: 100%; border-radius: 50%;
+  border-top: 2px solid rgba(var(--acc-rgb), .95); transform: rotate(-3deg);
+  background: linear-gradient(180deg, rgba(var(--acc-rgb), .34), rgba(var(--acc2-rgb, var(--acc-rgb)), .10) 14%, transparent 30%);
+  box-shadow: 0 -8px 26px rgba(var(--acc-rgb), .55); }
+.g-wave b { position: absolute; left: 14%; right: 36%; top: -2px; height: 2px; border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.95), transparent); }
+.g-rim { box-shadow: inset 0 1.5px 0 rgba(255,255,255,.75), inset 0 -1px 0 rgba(255,255,255,.22),
+  inset 0 0 0 1.5px rgba(var(--acc-rgb), .9), inset 0 0 26px rgba(var(--acc-rgb), .45),
+  inset 0 -22px 30px -14px rgba(var(--acc2-rgb, var(--acc-rgb)), .6); }
+
+/* ---- bubbles ---- */
+#lib-grid .st-tile.baked { --rad: 30px; border-radius: 30px; overflow: visible !important; background: none !important;
+  box-shadow: 0 0 0 1px rgba(var(--acc-rgb), .55), 0 0 22px rgba(var(--acc-rgb), .32), 0 14px 30px rgba(0,0,0,.5) !important; }
+.st-tile.baked > *:not(.g-clip):not(.st-chip) { display: none !important; }
+.st-tile.baked .st-card { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .9; transition: opacity .12s linear; }
+.st-tile.baked.focus .st-card { opacity: 1; }
+.st-tile.baked .g-wave { bottom: -82%; }
+.g-ok { position: absolute; left: 16px; bottom: 12px; z-index: 2; display: flex; align-items: center; gap: 7px; font-size: 15px; font-weight: 700; color: #fff;
+  text-shadow: 0 1px 8px rgba(0,0,0,.95); opacity: 0; transform: translateY(5px); transition: opacity .12s linear, transform .16s var(--quick); }
+.g-ok b { font-size: 11px; letter-spacing: 1.5px; padding: 3px 9px; border-radius: 9px; background: #f4f5f8; color: rgb(var(--acc-rgb));
+  box-shadow: 0 0 10px rgba(var(--acc-rgb), .8); text-shadow: none; }
+.st-tile.baked.focus .g-ok { opacity: 1; transform: none; }
+.st-tile.baked.frost::after { display: block !important; inset: -4px; border-radius: 34px; z-index: 3; will-change: opacity;
+  border: 2.5px solid rgba(255,255,255,.95);
+  box-shadow: 0 0 0 3px rgba(var(--acc-rgb), .85), 0 0 44px rgba(var(--acc-rgb), .85), 0 22px 50px rgba(0,0,0,.6); }
+.st-tile.baked.focus { transform: translateY(-6px) scale(1.06); }
+
+/* ---- top panels ---- */
+.st-h { position: absolute; left: 0; bottom: 0; width: 100%; height: 480px; border-radius: 46px;
+  box-shadow: 0 0 0 2px rgba(var(--acc-rgb), .9), 0 0 70px rgba(var(--acc-rgb), .45), 0 0 140px rgba(var(--acc2-rgb), .22), 0 36px 80px rgba(0,0,0,.6);
+  opacity: 0; transform: translate3d(0, 10px, 0); transition: opacity .18s linear, transform .24s var(--quick); will-change: opacity, transform; }
+.st-h.on { opacity: 1; transform: none; }
+.st-h .g-rim { box-shadow: inset 0 2px 0 rgba(255,255,255,.8), inset 0 -1.5px 0 rgba(255,255,255,.25),
+  inset 0 0 0 2px rgba(var(--acc-rgb), .9), inset 0 0 50px rgba(var(--acc-rgb), .4), inset 0 -40px 50px -20px rgba(var(--acc2-rgb), .6); }
+.st-h .g-refr { background-size: 105% 105%; -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 86%, #000 100%);
+  mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, transparent 86%, #000 100%); }
+.st-h .g-wave { bottom: -90%; border-top-width: 2.5px; transform: rotate(-1.6deg); }
+.h-kick { position: absolute; left: 64px; top: 30px; z-index: 2; font-size: 17px; font-weight: 700; letter-spacing: 8px; color: rgba(255,255,255,.88);
+  text-shadow: 0 1px 10px rgba(0,0,0,.9); text-transform: uppercase; }
+.h-kick::before { content: ""; display: inline-block; width: 30px; height: 2px; background: #fff; margin-right: 14px; vertical-align: middle; }
+.h-ok { position: absolute; left: 64px; bottom: 34px; z-index: 2; display: flex; align-items: center; gap: 14px; font-size: 24px; font-weight: 700; color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,.95); }
+.h-ok b { font-size: 18px; letter-spacing: 2px; padding: 7px 17px; border-radius: 14px; background: #f4f5f8; color: rgb(var(--acc-rgb));
+  box-shadow: 0 0 0 2px rgba(var(--acc-rgb), .6), 0 0 18px rgba(var(--acc-rgb), .7); text-shadow: none; }
+.h-ok em { font-style: normal; font-weight: 400; font-size: 19px; color: rgba(255,255,255,.85); padding-left: 14px; border-left: 1.5px solid rgba(255,255,255,.45); }
+.st-h.warm { opacity: .01; transition: none; }   /* one-time pre-draw so the first visit to each panel is smooth */
+/* 3.7b fixes: show the glass wrapper in bubbles (an older 3.4 rule hid it); refraction only bends the top/bottom
+   edges vertically (no sideways shift = no ghost logos); softer gloss */
+#lib-grid .st-tile.baked > .g-clip { display: block !important; }
+#lib-grid .st-tile.baked > .g-clip > .st-card { display: block !important; }
+.st-h .g-refr { background-size: 100% 107%; opacity: .45;
+  -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 9%, transparent 88%, #000 100%);
+          mask-image: linear-gradient(180deg, #000 0%, transparent 9%, transparent 88%, #000 100%); }
+.g-spec::before { left: 2%; right: 2%; top: -30%; height: 62%; border-radius: 0;
+  background: radial-gradient(ellipse 48% 58% at 30% 52%, rgba(255,255,255,.16), rgba(255,255,255,.05) 55%, transparent 72%); }
+.g-spec::after { background: linear-gradient(180deg, rgba(255,255,255,.08), transparent 70%); }
+/* 3.7c performance: nothing animates unless you can see it */
+#saver:not(.on) #sv-bg { animation-play-state: paused; }
+#sq:not(.open) .caret, #v-music[hidden] .caret { animation: none; }
+/* tighter glows = smaller layers to blend during the fade (same look at TV distance) */
+.st-h { box-shadow: 0 0 0 2px rgba(var(--acc-rgb), .9), 0 0 54px rgba(var(--acc-rgb), .45), 0 28px 60px rgba(0,0,0,.55); }
+.st-tile.baked.frost::after { box-shadow: 0 0 0 3px rgba(var(--acc-rgb), .85), 0 0 30px rgba(var(--acc-rgb), .85), 0 18px 40px rgba(0,0,0,.55); }
+/* 3.7d: lighter compositing — plain rounded clip (Tizen 9 clips rounded overflow natively); panels crossfade only */
+.g-clip { -webkit-mask-image: none; mask-image: none; }
+.st-h { transform: none; transition: opacity .2s linear; will-change: opacity; }
+
+/* Clean artwork: preserve its full aspect ratio inside the existing glass. */
+.g-clip { background: #08090e; }
+.st-tile.baked .g-clip { background: radial-gradient(ellipse at center, rgba(var(--acc-rgb),.16), rgba(8,9,14,.98)); }
+.g-clip > img, .st-tile.baked .st-card { object-fit: contain; object-position: center; }
+
+/* Edge light suggests refraction without drawing a second copy of the artwork. */
+.st-h .g-refr { background: linear-gradient(180deg, rgba(255,255,255,.16), transparent 8%, transparent 91%, rgba(var(--acc-rgb),.13));
+  background-size: 100% 100%; opacity: .6; -webkit-mask-image: none; mask-image: none; }
+.g-lens { background: radial-gradient(ellipse 70% 80% at 50% 38%, rgba(255,255,255,.045), transparent 55%, rgba(0,0,0,.17)); }
+.g-wave { border-top-color: rgba(var(--acc-rgb),.55);
+  background: linear-gradient(180deg, rgba(var(--acc-rgb),.16), rgba(var(--acc2-rgb, var(--acc-rgb)),.05) 14%, transparent 30%);
+  box-shadow: 0 -5px 18px rgba(var(--acc-rgb),.25); }
+.g-rim { box-shadow: inset 0 1.5px 0 rgba(255,255,255,.52), inset 0 -1px 0 rgba(255,255,255,.14),
+  inset 0 0 0 1px rgba(var(--acc-rgb),.58), inset 0 0 20px rgba(var(--acc-rgb),.22); }
+.st-h .g-rim { box-shadow: inset 0 2px 0 rgba(255,255,255,.6), inset 0 -1px 0 rgba(255,255,255,.16),
+  inset 0 0 0 1.5px rgba(var(--acc-rgb),.62), inset 0 0 28px rgba(var(--acc-rgb),.22); }
+.st-h { will-change: auto; box-shadow: 0 0 0 1.5px rgba(var(--acc-rgb),.65), 0 0 38px rgba(var(--acc-rgb),.25), 0 28px 60px rgba(0,0,0,.5); }
+.st-h.on, .st-h.warm { will-change: opacity; }
+.st-tile.baked.frost::after { box-shadow: 0 0 0 3px rgba(var(--acc-rgb),.6), 0 0 24px rgba(var(--acc-rgb),.48), 0 18px 40px rgba(0,0,0,.5); }
+
+/* One generous hero frame for every service; artwork stays undistorted. */
+#st-stage { top: 40px; height: 520px; }
+#st-stage.baked #st-card, #st-stage.composed #st-card { object-fit: contain; object-position: center; }
+.st-h { height: 520px; border-radius: 50px;
+  box-shadow: 0 0 0 2px rgba(var(--acc-rgb),.82), 0 0 0 5px rgba(var(--acc-rgb),.12),
+              0 0 42px rgba(var(--acc-rgb),.38), 0 28px 60px rgba(0,0,0,.56); }
+.st-h .g-clip { background: radial-gradient(ellipse 48% 90% at 0% 50%, rgba(var(--acc-rgb),.18), transparent 72%),
+  radial-gradient(ellipse 48% 90% at 100% 50%, rgba(var(--acc2-rgb),.14), transparent 72%), #06070c; }
+
+/* Static glass highlights keep navigation cheap and leave the artwork single-copy. */
+.st-h::before { content: ""; position: absolute; z-index: 2; inset: -2px; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(ellipse 85px 14px at 18% 0%, rgba(255,255,255,.72), transparent 72%),
+              radial-gradient(ellipse 105px 16px at 78% 100%, rgba(255,255,255,.52), transparent 72%);
+  box-shadow: inset 0 0 0 2px rgba(var(--acc-rgb),.68), inset 0 2px 2px rgba(255,255,255,.6),
+              inset 0 -2px 3px rgba(var(--acc-rgb),.55); }
+.st-h::after { content: ""; position: absolute; z-index: 2; left: 7%; right: 7%; top: 1px; height: 3px; border-radius: 50%; pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(var(--acc-rgb),.7) 24%, rgba(255,255,255,.9) 48%, rgba(var(--acc-rgb),.7) 72%, transparent);
+  box-shadow: 0 0 12px rgba(var(--acc-rgb),.45); }
+.st-h .g-refr { opacity: .8; background:
+  radial-gradient(ellipse 8% 65% at 0% 50%, rgba(var(--acc-rgb),.3), transparent 75%),
+  radial-gradient(ellipse 8% 65% at 100% 50%, rgba(var(--acc2-rgb),.28), transparent 75%),
+  linear-gradient(180deg, rgba(255,255,255,.15), transparent 9%, transparent 90%, rgba(var(--acc-rgb),.13)); }
+.st-h .g-rim { box-shadow: inset 0 2px 1px rgba(255,255,255,.72), inset 0 -2px 2px rgba(255,255,255,.2),
+  inset 0 0 0 2px rgba(var(--acc-rgb),.7), inset 0 0 32px rgba(var(--acc-rgb),.26); }
+.st-h .g-wave { bottom: -89%; border-top: 2px solid rgba(var(--acc-rgb),.8); transform: rotate(-1.6deg);
+  background: linear-gradient(180deg, rgba(var(--acc-rgb),.25), rgba(var(--acc2-rgb),.06) 18%, transparent 32%);
+  box-shadow: 0 -4px 18px rgba(var(--acc-rgb),.36); }
+.st-h .g-wave::after { content: ""; position: absolute; left: 12%; right: 10%; top: 7px; height: 1px; border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.7), rgba(var(--acc-rgb),.7), transparent); }
+.st-tile.baked.frost::after { box-shadow: 0 0 0 2px rgba(var(--acc-rgb),.72), 0 0 28px rgba(var(--acc-rgb),.58), 0 18px 40px rgba(0,0,0,.5); }
+
+/* Edge-only backings fill the frame while the original image remains contained above. */
+.st-tile.baked .g-clip.has-art-fill, .st-h .g-clip.has-art-fill {
+  background-image: var(--art-fill); background-position: center; background-size: 100% 100%; background-repeat: no-repeat; }
+
+/* Pre-fitted art (cards-fit/): already exactly frame-sized, so it simply fills the clip. */
+.g-clip.is-fit > img, .st-tile.baked .g-clip.is-fit .st-card { object-fit: fill; }
+.st-h { will-change: opacity; }
+
+/* =====================================================================
+   4.0 LIQUID GLASS (glass/<app>-*.webp from tools/build-glass.py)
+   Art + glass + bloom are one pre-rendered image per slot. Live: text,
+   selection lift/glow, panel crossfade. Panel 1645x492 leads; bubbles echo it.
+   ===================================================================== */
+.st-h.gl { height: 492px; border-radius: 76px; box-shadow: none !important; background: none; overflow: visible; }
+.st-h.gl::before, .st-h.gl::after { display: none !important; }
+.st-h.gl .gl-img { position: absolute; left: -60px; top: -60px; width: 1765px; height: 612px; display: block; pointer-events: none; }
+.st-h.gl .h-kick { left: 58px; top: 32px; font-size: 16px; letter-spacing: 9px; color: rgba(255,255,255,.9); }
+.gl-name { position: absolute; z-index: 2; font-size: 38px; font-weight: 700; letter-spacing: -.3px; color: #fff; white-space: nowrap;
+  text-shadow: 0 2px 14px rgba(0,0,0,.9), 0 0 2px rgba(0,0,0,.6); }
+.st-h.gl .h-ok { left: 58px; bottom: 30px; }
+
+#lib-grid .st-tile.gl { background: none !important; border: 0; box-shadow: none !important; overflow: visible !important; border-radius: 32px; }
+.st-tile.gl.frost::before { display: none !important; }
+.st-tile.gl > *:not(.gl-img):not(.gl-kick):not(.g-ok):not(.gl-tname):not(.st-chip) { display: none !important; }
+.st-tile.gl .gl-img { position: absolute; left: -22px; top: -22px; width: 357px; height: 214px; display: block; pointer-events: none;
+  opacity: .86; transition: opacity .12s linear; }
+.st-tile.gl.focus .gl-img { opacity: 1; }
+.gl-kick { position: absolute; left: 20px; top: 11px; z-index: 2; font-size: 9px; font-weight: 700; letter-spacing: 3.5px; text-transform: uppercase;
+  color: rgba(255,255,255,.82); text-shadow: 0 1px 6px rgba(0,0,0,.9); }
+.st-tile.gl .g-ok { display: flex !important; left: 18px; bottom: 11px; }
+.st-tile.gl.frost::after { display: block !important; inset: -3px; border-radius: 35px; z-index: 3; opacity: 0;
+  border: 2px solid rgba(255,255,255,.92); box-shadow: 0 0 0 2px rgba(var(--acc-rgb), .7), 0 0 34px rgba(var(--acc-rgb), .75); transition: opacity .12s linear; }
+.st-tile.gl.focus.frost::after { opacity: 1; }
+.st-tile.gl.focus { transform: translateY(-6px) scale(1.06); }
+/* Zeus: the poster carries its own title, so keep the overlays out of its way */
+.st-h.gl-zeus .h-ok em, .st-tile.gl-zeus .gl-kick { display: none; }
+
+/* app name under the logo on each bubble (matches the finished reference cards) */
+.gl-tname { position: absolute; z-index: 2; font-size: 15px; font-weight: 700; letter-spacing: -.1px; color: #fff; white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(0,0,0,.95), 0 0 2px rgba(0,0,0,.7); }
